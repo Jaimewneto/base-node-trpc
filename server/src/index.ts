@@ -3,7 +3,7 @@ import { trpcServer } from "@hono/trpc-server";
 import { appRouter } from "./trpc/router";
 import { createContext } from "./trpc/context";
 import { serve } from "@hono/node-server";
-import { db } from "./database/db";
+import { client } from "./database/client";
 
 export const app = new Hono();
 
@@ -17,7 +17,7 @@ app.use(
 
 serve({
   fetch: app.fetch,
-  port: 3000,
+  port: process.env.PORT && parseInt(process.env.PORT) || 3000,
 });
 
 console.info(`✅ Servidor ouvindo na porta 3000`);
@@ -25,7 +25,7 @@ console.info(`✅ Servidor ouvindo na porta 3000`);
 // Encerra conexões com o banco ao finalizar a aplicação
 const shutdown = async () => {
   console.info("🛑 Encerrando app... limpando conexões com o banco.");
-  await db.destroy();
+  await client.destroy();
   process.exit(0);
 };
 

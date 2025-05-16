@@ -26,28 +26,28 @@ const migrator = new Migrator({
   }),
 });
 
-async function runMigrations() {
-  const { error, results } = await migrator.migrateToLatest();
+async function rollbackMigration() {
+  const { error, results } = await migrator.migrateDown(); // <-- Aqui o rollback
 
   if (error) {
-    console.error("Migration failed:", error);
+    console.error("Rollback failed:", error);
     process.exit(1);
   }
 
   results?.forEach((result) => {
     if (result.status === "Success") {
       console.log(
-        `Migration "${result.migrationName}" was executed successfully.`
+        `Rollback of "${result.migrationName}" was executed successfully.`
       );
     } else {
-      console.error(`Migration "${result.migrationName}" failed.`);
+      console.error(`Rollback of "${result.migrationName}" failed.`);
     }
   });
 
   await db.destroy();
 }
 
-runMigrations().catch((err) => {
-  console.error("Error running migrations:", err);
+rollbackMigration().catch((err) => {
+  console.error("Error during rollback:", err);
   process.exit(1);
 });
