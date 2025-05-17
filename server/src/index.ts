@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 import { trpcServer } from "@hono/trpc-server";
-import { appRouter } from "./trpc/router";
-import { createContext } from "./trpc/context";
 import { serve } from "@hono/node-server";
+
+import { appRouter } from "./trpc/routes";
+import { createContext } from "./trpc/context";
+
 import { client } from "./database/client";
 
 export const app = new Hono();
@@ -29,5 +31,5 @@ const shutdown = async () => {
     process.exit(0);
 };
 
-process.on("SIGINT", shutdown); // Ctrl+C
-process.on("SIGTERM", shutdown); // kill, Docker stop, etc.
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
