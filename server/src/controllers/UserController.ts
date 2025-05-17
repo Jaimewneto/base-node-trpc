@@ -1,17 +1,23 @@
-import * as UserService from "../services/UserService";
+import { UserService } from "../services/UserService";
 
-export async function pingController() {
-    return "pong";
+const findUserById = async (id: number) => {
+    return await UserService.findUserById(id);
 }
 
-export async function getUsersController() {
-    return await UserService.getUsers();
+const findUsers = async () => {
+    return await UserService.findUsers();
 }
 
-export async function createUserController(input: {
+const createUser = async (input: {
     name: string;
     email: string;
     password: string;
-}) {
+}) => {
     return await UserService.createUser(input);
 }
+
+export const UserController = {
+    findUserById,
+    findUsers,
+    createUser,
+};

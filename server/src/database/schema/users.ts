@@ -14,7 +14,7 @@ export interface UserTable {
     password: string;
     created_at: ColumnType<Date, string | undefined, never>;
     updated_at: ColumnType<Date, string | undefined, never>;
-    deleted_at: ColumnType<Date, string | undefined, never>;
+    deleted_at: ColumnType<Date, string | undefined, Date>;
 }
 
 export type User = Selectable<UserTable>;

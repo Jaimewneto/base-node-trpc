@@ -1,9 +1,11 @@
 import { t } from "../trpc";
 
-import { userRouter } from "./user";
+import { appPrivateRouter } from "./private";
+import { appPublicRouter } from "./public";
 
 export const appRouter = t.router({
-    user: userRouter, // acessível via user.getUsers, user.createUser, etc.
+    private: appPrivateRouter,
+    public: appPublicRouter,
 });
 
 export type AppRouter = typeof appRouter;

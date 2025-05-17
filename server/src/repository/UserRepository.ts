@@ -1,49 +1,33 @@
-import { client } from "../database/client";
+import { UserUpdate, NewUser } from "../database/schema/users";
 
-import { UserUpdate, User, NewUser } from "../database/schema/users";
+import { BaseRepo } from "./BaseRepository";
 
-export async function findUserById(id: number) {
-    return await client
-        .selectFrom("users")
-        .where("id", "=", id)
-        .selectAll()
-        .executeTakeFirst();
-}
+const schema = "users";
 
-export async function findPeople(criteria: Partial<User>) {
-    let query = client.selectFrom("users");
+const findUserById = async (id: number) => {
+    return await BaseRepo.findRecordByIdentifier({ id, schema });
+};
 
-    if (criteria.id) {
-        query = query.where("id", "=", criteria.id); // Kysely is immutable, you must re-assign!
-    }
+const findUsers = async () => {
+    return await BaseRepo.findManyRecords({ schema });
+};
 
-    if (criteria.name) {
-        query = query.where("name", "=", criteria.name);
-    }
+const createUser = async (user: NewUser) => {
+    return await BaseRepo.createRecord({ data: user, schema });
+};
 
-    return await query.selectAll().execute();
-}
+const updateUser = async (id: number, data: UserUpdate) => {
+    return await BaseRepo.updateRecord({ id, data, schema });
+};
 
-export async function updateUser(id: number, updateWith: UserUpdate) {
-    await client
-        .updateTable("users")
-        .set(updateWith)
-        .where("id", "=", id)
-        .execute();
-}
+const deleteUser = async (id: number) => {
+    return await BaseRepo.deleteRecord({ id, schema });
+};
 
-export async function createUser(user: NewUser) {
-    return await client
-        .insertInto("users")
-        .values(user)
-        .returningAll()
-        .executeTakeFirstOrThrow();
-}
-
-export async function deleteUser(id: number) {
-    return await client
-        .deleteFrom("users")
-        .where("id", "=", id)
-        .returningAll()
-        .executeTakeFirst();
-}
+export const UserRepo = {
+    findUserById,
+    findUsers,
+    updateUser,
+    createUser,
+    deleteUser,
+};

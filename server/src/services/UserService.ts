@@ -1,18 +1,22 @@
 import { hash } from "bcryptjs";
 
-import * as UserRepo from "../repository/UserRepository";
+import { UserRepo } from "../repository/UserRepository";
 
 import { NewUser } from "../database/schema/users";
 
-export async function getUsers() {
-    return await UserRepo.findPeople({});
+const findUserById = async (id: number) => {
+    return await UserRepo.findUserById(id);
 }
 
-export async function createUser(input: {
+const findUsers = async () => {
+    return await UserRepo.findUsers();
+};
+
+const createUser = async (input: {
     name: string;
     email: string;
     password: string;
-}) {
+}) => {
     const hashedPassword = await hash(input.password, 10);
 
     const user: NewUser = {
@@ -23,3 +27,9 @@ export async function createUser(input: {
 
     return await UserRepo.createUser(user);
 }
+
+export const UserService = {
+    findUserById,
+    findUsers,
+    createUser,
+};
