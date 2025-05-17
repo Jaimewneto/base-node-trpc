@@ -1,6 +1,8 @@
+import { hash } from 'bcryptjs';
+
 import * as UserRepo from '../repository/UserRepository';
-import { NewUser } from '../database/schema';
-import { hash } from 'bcryptjs'; // exemplo de lógica de negócio
+
+import { NewUser } from '../database/schema/users';
 
 export async function getUsers() {
     return await UserRepo.findPeople({});

@@ -1,5 +1,6 @@
 import { client } from '../database/client'
-import { UserUpdate, User, NewUser } from '../database/schema'
+
+import { UserUpdate, User, NewUser } from '../database/schema/users'
 
 export async function findUserById(id: number) {
   return await client.selectFrom('users')
