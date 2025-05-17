@@ -15,7 +15,7 @@ const createSchema = z.object({
     password: passwordSchema,
 });
 
-const patchSchema = createSchema.partial();
+const patchSchema = createSchema.partial().merge(identifierSchema);
 
 export const UserValidation = {
     identifierSchema,

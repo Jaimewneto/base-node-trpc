@@ -13,7 +13,7 @@ export interface UserTable {
     email: string;
     password: string;
     created_at: ColumnType<Date, string | undefined, never>;
-    updated_at: ColumnType<Date, string | undefined, never>;
+    updated_at: ColumnType<Date, string | undefined, undefined | Date >;
     deleted_at: ColumnType<Date, string | undefined, Date>;
 }
 

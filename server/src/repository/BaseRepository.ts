@@ -28,7 +28,7 @@ const createRecord = async <T extends keyof Database>({ data, schema }: { data: 
 };
 
 const updateRecord = async <T extends keyof Database>({ id, data, schema }: { id: number; data: RecordUpdate<T>; schema: T }) => {
-    await client
+    return await client
         .updateTable(schema)
         .set(data)
         .where("id", "=", id)

@@ -15,4 +15,12 @@ export const userRouter = t.router({
     createUser: t.procedure
         .input(UserValidation.createSchema)
         .mutation(({ input }) => UserController.createUser(input)),
+
+    updateUser: t.procedure
+        .input(UserValidation.patchSchema)
+        .mutation(({ input }) => UserController.updateUser(input.id, input)),
+
+    deleteUser: t.procedure
+        .input(UserValidation.identifierSchema)
+        .mutation(({ input }) => UserController.deleteUser(input.id)),
 });

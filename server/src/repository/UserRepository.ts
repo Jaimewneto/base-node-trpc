@@ -17,6 +17,8 @@ const createUser = async (user: NewUser) => {
 };
 
 const updateUser = async (id: number, data: UserUpdate) => {
+    data.updated_at = new Date();
+
     return await BaseRepo.updateRecord({ id, data, schema });
 };
 
