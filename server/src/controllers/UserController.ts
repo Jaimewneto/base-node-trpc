@@ -3,23 +3,43 @@ import { UserService } from "../services/UserService";
 import { NewUser, UserUpdate } from "../database/schema/users";
 
 const findUserById = async (id: number) => {
-    return await UserService.findUserById(id);
+    try {
+        return await UserService.findUserById(id);
+    } catch (error) {
+        throw error;
+    }
 }
 
 const findUsers = async () => {
-    return await UserService.findUsers();
+    try {
+        return await UserService.findUsers();
+    } catch (error) {
+        throw error;
+    }
 }
 
 const createUser = async (input: NewUser) => {
-    return await UserService.createUser(input);
+    try {
+        return await UserService.createUser(input);
+    } catch (error) {
+        throw error;
+    }
 }
 
 const updateUser = async (id: number, input: UserUpdate) => {
-    return await UserService.updateUser(id, input);
+    try {
+        return await UserService.updateUser(id, input);
+    } catch (error) {
+        throw error;
+    }
 }
 
 const deleteUser = async (id: number) => {
-    return await UserService.deleteUser(id);
+    try {
+        return await UserService.deleteUser(id);
+    } catch (error) {
+        throw error;
+    }
 }
 
 export const UserController = {

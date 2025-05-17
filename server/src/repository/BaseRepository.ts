@@ -2,11 +2,30 @@ import { client } from "../database/client";
 
 import { Database, NewRecord, RecordUpdate } from "../database/schema";
 
+import { Clause } from "../types/clause";
+
+import { applyClauseToQuery } from "../utils/clause";
+
 const findRecordByIdentifier = async <T extends keyof Database>({ id, schema }: { id: number; schema: T }) => {
     return await client
         .selectFrom(schema)
         .where("id", "=", id)
         .where("deleted_at", "is", null)
+        .selectAll()
+        .executeTakeFirst();
+};
+
+const findRecord = async <T extends keyof Database>({ schema, clause }: { schema: T; clause: Clause }) => {
+    let query = client.selectFrom(schema);
+
+    query.where("deleted_at", "is", null)
+
+    if (clause) {
+        const filteredQuery = applyClauseToQuery(query, clause);
+        return await filteredQuery.selectAll().executeTakeFirst();
+    }
+
+    return await query
         .selectAll()
         .executeTakeFirst();
 };
@@ -47,6 +66,7 @@ const deleteRecord = async <T extends keyof Database>({ id, schema }: { id: numb
 
 export const BaseRepo = {
     findRecordByIdentifier,
+    findRecord,
     findManyRecords,
     createRecord,
     updateRecord,

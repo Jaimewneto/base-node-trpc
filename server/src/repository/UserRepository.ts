@@ -1,11 +1,17 @@
 import { UserUpdate, NewUser } from "../database/schema/users";
 
+import { Clause } from "../types/clause";
+
 import { BaseRepo } from "./BaseRepository";
 
 const schema = "users";
 
 const findUserById = async (id: number) => {
     return await BaseRepo.findRecordByIdentifier({ id, schema });
+};
+
+const findUser = async (clause: Clause) => {
+    return await BaseRepo.findRecord({ schema, clause });
 };
 
 const findUsers = async () => {
@@ -28,6 +34,7 @@ const deleteUser = async (id: number) => {
 
 export const UserRepo = {
     findUserById,
+    findUser,
     findUsers,
     updateUser,
     createUser,
