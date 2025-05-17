@@ -1,6 +1,5 @@
-import { UserTable } from './users'
+import { UserTable } from "./users";
 
 export interface Database {
-  users: UserTable
+    users: UserTable;
 }
-

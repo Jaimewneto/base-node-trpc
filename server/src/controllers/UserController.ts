@@ -1,4 +1,4 @@
-import * as UserService from '../services/UserService';
+import * as UserService from "../services/UserService";
 
 export async function pingController() {
     return "pong";

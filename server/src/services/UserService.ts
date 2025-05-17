@@ -1,14 +1,18 @@
-import { hash } from 'bcryptjs';
+import { hash } from "bcryptjs";
 
-import * as UserRepo from '../repository/UserRepository';
+import * as UserRepo from "../repository/UserRepository";
 
-import { NewUser } from '../database/schema/users';
+import { NewUser } from "../database/schema/users";
 
 export async function getUsers() {
     return await UserRepo.findPeople({});
 }
 
-export async function createUser(input: { name: string; email: string; password: string }) {
+export async function createUser(input: {
+    name: string;
+    email: string;
+    password: string;
+}) {
     const hashedPassword = await hash(input.password, 10);
 
     const user: NewUser = {
