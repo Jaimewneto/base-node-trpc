@@ -1,13 +1,13 @@
-import { t } from "../../trpc";
+import { router, procedure } from "../../trpc";
 
 import { UserController } from "../../../controllers/UserController";
 
 import { UserValidation } from "../../../validation/UserValidation";
 
-export const userRouter = t.router({
-    getUsers: t.procedure.query(UserController.findUsers),
+export const userRouter = router({
+    getUsers: procedure.query(UserController.findUsers),
 
-    createUser: t.procedure
+    createUser: procedure
         .input(UserValidation.createSchema)
         .mutation(({ input }) => UserController.createUser(input)),
 });

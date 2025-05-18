@@ -1,8 +1,8 @@
-import { t } from "../../trpc";
+import { router } from "../../trpc";
 
 import { userRouter } from "./user";
 
-export const appPrivateRouter = t.router({
+export const appPrivateRouter = router({
     user: userRouter, // acessível via user.getUsers, user.createUser, etc.
 });
 

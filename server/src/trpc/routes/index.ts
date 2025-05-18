@@ -1,9 +1,9 @@
-import { t } from "../trpc";
+import { router } from "../trpc";
 
 import { appPrivateRouter } from "./private";
 import { appPublicRouter } from "./public";
 
-export const appRouter = t.router({
+export const appRouter = router({
     private: appPrivateRouter,
     public: appPublicRouter,
 });

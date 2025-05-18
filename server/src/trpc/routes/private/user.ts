@@ -1,26 +1,21 @@
-import { t } from "../../trpc";
+import { router, protectedProcedure } from "../../trpc";
 
 import { UserController } from "../../../controllers/UserController";
 
 import { UserValidation } from "../../../validation/UserValidation";
 
-export const userRouter = t.router({
-    getUser: t.procedure
+export const userRouter = router({
+    getUser: protectedProcedure
         .input(UserValidation.identifierSchema)
         .query(({ input }) => UserController.findUserById(input.id)),
 
+    getUsers: protectedProcedure.query(UserController.findUsers),
 
-    getUsers: t.procedure.query(UserController.findUsers),
-
-    createUser: t.procedure
-        .input(UserValidation.createSchema)
-        .mutation(({ input }) => UserController.createUser(input)),
-
-    updateUser: t.procedure
+    updateUser: protectedProcedure
         .input(UserValidation.patchSchema)
         .mutation(({ input }) => UserController.updateUser(input.id, input)),
 
-    deleteUser: t.procedure
+    deleteUser: protectedProcedure
         .input(UserValidation.identifierSchema)
         .mutation(({ input }) => UserController.deleteUser(input.id)),
 });
