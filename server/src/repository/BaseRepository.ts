@@ -6,7 +6,9 @@ import { Clause } from "../types/clause";
 
 import { applyClauseToQuery } from "../utils/clause";
 
-const findRecordByIdentifier = async <T extends keyof Database>({ id, schema }: { id: number; schema: T }) => {
+import { ulid } from "ulid";
+
+const findRecordByIdentifier = async <T extends keyof Database>({ id, schema }: { id: string; schema: T }) => {
     return await client
         .selectFrom(schema)
         .where("id", "=", id)
@@ -41,12 +43,12 @@ const findManyRecords = async <T extends keyof Database>({ schema }: { schema: T
 const createRecord = async <T extends keyof Database>({ data, schema }: { data: NewRecord<T>; schema: T }) => {
     return await client
         .insertInto(schema)
-        .values(data)
+        .values({ ...data, id: ulid() })
         .returningAll()
         .executeTakeFirstOrThrow();
 };
 
-const updateRecord = async <T extends keyof Database>({ id, data, schema }: { id: number; data: RecordUpdate<T>; schema: T }) => {
+const updateRecord = async <T extends keyof Database>({ id, data, schema }: { id: string; data: RecordUpdate<T>; schema: T }) => {
     return await client
         .updateTable(schema)
         .set(data)
@@ -55,7 +57,7 @@ const updateRecord = async <T extends keyof Database>({ id, data, schema }: { id
         .execute();
 };
 
-const deleteRecord = async <T extends keyof Database>({ id, schema }: { id: number; schema: T }) => {
+const deleteRecord = async <T extends keyof Database>({ id, schema }: { id: string; schema: T }) => {
     return await client
         .updateTable(schema)
         .set({ deleted_at: new Date() })

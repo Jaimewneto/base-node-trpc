@@ -6,7 +6,7 @@ import { NewUser, UserUpdate } from "../database/schema/users";
 
 import { Clause } from "../types/clause";
 
-const findUserById = async (id: number) => {
+const findUserById = async (id: string) => {
     return await UserRepo.findUserById(id);
 }
 
@@ -31,7 +31,7 @@ const createUser = async (data: NewUser) => {
     return await UserRepo.createUser(user);
 }
 
-const updateUser = async (id: number, data: UserUpdate) => {
+const updateUser = async (id: string, data: UserUpdate) => {
     const password = data.password ? await hash(data.password, 10) : undefined;
 
     const user: UserUpdate = {
@@ -42,7 +42,7 @@ const updateUser = async (id: number, data: UserUpdate) => {
     return await UserRepo.updateUser(id, user);
 }
 
-const deleteUser = async (id: number) => {
+const deleteUser = async (id: string) => {
     return await UserRepo.deleteUser(id);
 }
 

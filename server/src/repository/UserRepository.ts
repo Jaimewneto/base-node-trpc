@@ -6,7 +6,7 @@ import { BaseRepo } from "./BaseRepository";
 
 const schema = "users";
 
-const findUserById = async (id: number) => {
+const findUserById = async (id: string) => {
     return await BaseRepo.findRecordByIdentifier({ id, schema });
 };
 
@@ -22,13 +22,13 @@ const createUser = async (user: NewUser) => {
     return await BaseRepo.createRecord({ data: user, schema });
 };
 
-const updateUser = async (id: number, data: UserUpdate) => {
+const updateUser = async (id: string, data: UserUpdate) => {
     data.updated_at = new Date();
 
     return await BaseRepo.updateRecord({ id, data, schema });
 };
 
-const deleteUser = async (id: number) => {
+const deleteUser = async (id: string) => {
     return await BaseRepo.deleteRecord({ id, schema });
 };
 

@@ -6,8 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --watch src --ignore-watch node_modules --poll src/index.ts",
-        "migrate": "ts-node-dev src/database/migrate.ts",
-        "rollback": "ts-node-dev src/database/rollback.ts"
+        "migrate": "ts-node-dev src/database/scripts/migrate.ts",
+        "rollback": "ts-node-dev src/database/scripts/rollback.ts"
     },
     "keywords": [],
     "author": "",
@@ -30,6 +30,7 @@
         "kysely": "^0.28.2",
         "pg": "^8.16.0",
         "ts-node": "^10.9.2",
+        "ulid": "^3.0.0",
         "zod": "^3.24.4"
     }
 }

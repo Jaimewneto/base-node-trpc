@@ -2,7 +2,7 @@ import { UserService } from "../services/UserService";
 
 import { NewUser, UserUpdate } from "../database/schema/users";
 
-const findUserById = async (id: number) => {
+const findUserById = async (id: string) => {
     try {
         return await UserService.findUserById(id);
     } catch (error) {
@@ -26,7 +26,7 @@ const createUser = async (input: NewUser) => {
     }
 }
 
-const updateUser = async (id: number, input: UserUpdate) => {
+const updateUser = async (id: string, input: UserUpdate) => {
     try {
         return await UserService.updateUser(id, input);
     } catch (error) {
@@ -34,7 +34,7 @@ const updateUser = async (id: number, input: UserUpdate) => {
     }
 }
 
-const deleteUser = async (id: number) => {
+const deleteUser = async (id: string) => {
     try {
         return await UserService.deleteUser(id);
     } catch (error) {

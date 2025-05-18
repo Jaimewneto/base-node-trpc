@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const identifierSchema = z.object({ id: z.number().int() });
+const identifierSchema = z.object({ id: z.string() });
 
 const passwordSchema = z.string()
   .min(8, "A senha deve ter no mínimo 8 caracteres")

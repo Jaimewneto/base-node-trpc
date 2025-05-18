@@ -8,7 +8,7 @@ import {
 } from "kysely";
 
 export interface UserTable {
-    id: Generated<number>;
+    id: Generated<string>;
     name: string;
     email: string;
     password: string;
