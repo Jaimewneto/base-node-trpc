@@ -1,6 +1,6 @@
 import { Expression, ExpressionBuilder, SelectQueryBuilder, sql, SqlBool } from 'kysely';
 
-import { Clause, Condition, PostgresComparisonOperators } from '../types/clause';
+import { Clause, Condition, PostgresComparisonOperators } from '@/types/clause';
 
 /**
  * Aplica uma condição a uma query Kysely

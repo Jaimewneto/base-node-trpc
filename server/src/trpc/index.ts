@@ -1,6 +1,6 @@
 import { initTRPC, TRPCError } from "@trpc/server";
-import { createContext } from "./context";
-import { verify } from "../utils/auth";
+import { createContext } from "@/trpc/context";
+import { verify } from "@/utils/auth";
 
 const t = initTRPC.context<typeof createContext>().create();
 

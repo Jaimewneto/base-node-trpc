@@ -1,8 +1,8 @@
 import Fastify from "fastify";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
-import { appRouter } from "./trpc/routes";
-import { createContext } from "./trpc/context";
-import { client } from "./database/client";
+import { appRouter } from "@/trpc/routes";
+import { createContext } from "@/trpc/context";
+import { client } from "@/database/client";
 
 const fastify = Fastify({
     logger: true,
