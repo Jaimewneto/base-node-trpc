@@ -2,7 +2,7 @@ import { hash } from "bcryptjs";
 
 import { UserRepo } from "../repository/UserRepository";
 
-import { NewUser, UserUpdate } from "../database/schema/users";
+import { User, NewUser, UserUpdate } from "../database/schema/users";
 
 import { Clause } from "../types/clause";
 
@@ -11,7 +11,7 @@ const findUserById = async (id: string) => {
 }
 
 const findUserByEmail = async (email: string) => {
-    const clause: Clause = { junction: "and", conditions: [{ field: "email", operator: "=", value: email }] };
+    const clause: Clause<User> = { junction: "and", conditions: [{ field: "email", operator: "=", value: email }] };
 
     return await UserRepo.findUser(clause);
 };

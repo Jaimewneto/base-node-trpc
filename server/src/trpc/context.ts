@@ -1,16 +1,11 @@
-import type { Context } from "hono";
+import type { inferAsyncReturnType } from "@trpc/server";
+import type { FastifyRequest } from "fastify";
 
-import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
-
-export const createContext = async (
-    _opts: FetchCreateContextFnOptions,
-    c: Context,
-) => {
+export async function createContext({ req }: { req: FastifyRequest }) {
     return {
-        req: c.req,
-        env: c.env,
-        headers: c.req.raw.headers,
+        req,
+        headers: req.headers,
     };
-};
+}
 
-export type ContextType = Awaited<ReturnType<typeof createContext>>;
+export type ContextType = inferAsyncReturnType<typeof createContext>;

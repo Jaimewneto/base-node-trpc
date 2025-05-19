@@ -1,14 +1,11 @@
 import { initTRPC, TRPCError } from "@trpc/server";
-
 import { createContext } from "./context";
-
 import { verify } from "../utils/auth";
 
-const t = initTRPC.context<Awaited<ReturnType<typeof createContext>>>().create();
+const t = initTRPC.context<typeof createContext>().create();
 
-// Middleware de autenticação
 const isAuthed = t.middleware(async ({ ctx, next }) => {
-    const authHeader = ctx.req.raw.headers.get("authorization");
+    const authHeader = ctx.headers.authorization;
 
     if (!authHeader) throw new TRPCError({ code: "UNAUTHORIZED" });
 
@@ -30,5 +27,4 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
 export const router = t.router;
 export const procedure = t.procedure;
 export const protectedProcedure = t.procedure.use(isAuthed);
-
 export { t };

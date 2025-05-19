@@ -1,4 +1,4 @@
-import { UserUpdate, NewUser } from "../database/schema/users";
+import { User, UserUpdate, NewUser } from "../database/schema/users";
 
 import { Clause } from "../types/clause";
 
@@ -10,7 +10,7 @@ const findUserById = async (id: string) => {
     return await BaseRepo.findRecordByIdentifier({ id, schema });
 };
 
-const findUser = async (clause: Clause) => {
+const findUser = async (clause: Clause<User>) => {
     return await BaseRepo.findRecord({ schema, clause });
 };
 

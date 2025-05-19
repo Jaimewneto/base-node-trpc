@@ -1,28 +1,31 @@
-import { Hono } from "hono";
-import { trpcServer } from "@hono/trpc-server";
-import { serve } from "@hono/node-server";
-
+import Fastify from "fastify";
+import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import { appRouter } from "./trpc/routes";
 import { createContext } from "./trpc/context";
-
 import { client } from "./database/client";
 
-export const app = new Hono();
-
-app.use(
-    "/trpc/*",
-    trpcServer({
-        router: appRouter,
-        createContext,
-    }),
-);
-
-serve({
-    fetch: app.fetch,
-    port: (process.env.PORT && parseInt(process.env.PORT)) || 3000,
+const fastify = Fastify({
+    logger: true,
 });
 
-console.info(`✅ Servidor ouvindo na porta 3000`);
+// Plugin tRPC
+fastify.register(fastifyTRPCPlugin, {
+    prefix: "/trpc",
+    trpcOptions: {
+        router: appRouter,
+        createContext,
+    },
+});
+
+const port = Number(process.env.PORT) || 3000;
+
+fastify.listen({ port }, (err, address) => {
+    if (err) {
+        fastify.log.error(err);
+        process.exit(1);
+    }
+    console.log(`✅ Servidor ouvindo em ${address}`);
+});
 
 // Encerra conexões com o banco ao finalizar a aplicação
 const shutdown = async () => {

@@ -17,7 +17,7 @@ const findRecordByIdentifier = async <T extends keyof Database>({ id, schema }: 
         .executeTakeFirst();
 };
 
-const findRecord = async <T extends keyof Database>({ schema, clause }: { schema: T; clause: Clause }) => {
+const findRecord = async <T extends keyof Database>({ schema, clause }: { schema: T; clause: Clause<T> }) => {
     let query = client.selectFrom(schema);
 
     query.where("deleted_at", "is", null)
@@ -32,10 +32,15 @@ const findRecord = async <T extends keyof Database>({ schema, clause }: { schema
         .executeTakeFirst();
 };
 
-const findManyRecords = async <T extends keyof Database>({ schema }: { schema: T }) => {
+const findManyRecords = async <T extends keyof Database>({ schema, clause }: { schema: T; clause?: Clause<T> }) => {
     let query = client.selectFrom(schema);
 
-    // fazer o query e pagination
+    query.where("deleted_at", "is", null)
+
+    if (clause) {
+        const filteredQuery = applyClauseToQuery(query, clause);
+        return await filteredQuery.selectAll().execute();
+    }
 
     return await query.selectAll().where("deleted_at", "is", null).execute();
 };
