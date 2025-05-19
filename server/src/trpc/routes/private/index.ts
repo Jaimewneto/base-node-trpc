@@ -1,4 +1,4 @@
-import { router } from "../../trpc";
+import { router } from "../..";
 
 import { userRouter } from "./user";
 

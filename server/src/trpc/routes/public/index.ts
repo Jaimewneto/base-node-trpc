@@ -2,7 +2,7 @@ import { AuthController } from "../../../controllers/AuthController";
 
 import { AuthValidation } from "../../../validation/AuthValidation";
 
-import { router, procedure } from "../../trpc";
+import { router, procedure } from "../..";
 
 import { userRouter } from "./user";
 

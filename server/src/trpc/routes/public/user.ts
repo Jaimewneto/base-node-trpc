@@ -1,4 +1,4 @@
-import { router, procedure } from "../../trpc";
+import { router, procedure } from "../..";
 
 import { UserController } from "../../../controllers/UserController";
 

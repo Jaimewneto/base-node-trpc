@@ -1,4 +1,4 @@
-import { router } from "../trpc";
+import { router } from "..";
 
 import { appPrivateRouter } from "./private";
 import { appPublicRouter } from "./public";
