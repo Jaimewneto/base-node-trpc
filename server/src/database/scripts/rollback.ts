@@ -9,10 +9,7 @@ import { Migrator, FileMigrationProvider } from "kysely";
 const db = new Kysely<any>({
     dialect: new PostgresDialect({
         pool: new Pool({
-            host: process.env.DATABASE_HOST || "localhost",
-            database: process.env.DATABASE_NAME,
-            user: process.env.DATABASE_USER,
-            password: process.env.DATABASE_PASSWORD,
+            connectionString: process.env.DATABASE_URL,
         }),
     }),
 });
