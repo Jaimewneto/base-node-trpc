@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-// lembrar de adicionar os operadores no validador de schemas em src/validation/where.ts
-
 export type PostgresComparisonOperators =
     | "="
     | "!="
@@ -51,15 +48,15 @@ const example: Where = {
         {
             junction: "and",
             conditions: [
-                { field: "condicao1", operator: "=", value: "value1" },
-                { field: "condicao2", operator: "=", value: "value2" },
+                { field: "field1", operator: "=", value: "value1" },
+                { field: "field2", operator: "=", value: "value2" },
             ],
         },
         {
             junction: "and",
             conditions: [
-                { field: "condicao3", operator: "=", value: "value3" },
-                { field: "condicao4", operator: "=", value: "value4" },
+                { field: "field3", operator: "=", value: "value3" },
+                { field: "field4", operator: "=", value: "value4" },
             ],
         },
     ],
@@ -68,13 +65,13 @@ const example: Where = {
 const example2: Where = {
     junction: "or",
     conditions: [
-        { field: "condicao1", operator: "=", value: "value1" },
-        { field: "condicao2", operator: "=", value: "value2" },
+        { field: "field1", operator: "=", value: "value1" },
+        { field: "field2", operator: "=", value: "value2" },
         {
             junction: "and",
             conditions: [
-                { field: "condicao3", operator: "=", value: "value3" },
-                { field: "condicao4", operator: "=", value: "value4" },
+                { field: "field3", operator: "=", value: "value3" },
+                { field: "field4", operator: "=", value: "value4" },
             ],
         },
     ],

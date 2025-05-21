@@ -27,7 +27,7 @@ fastify.listen({ port }, (err, address) => {
     console.log(`✅ Servidor ouvindo em ${address}`);
 });
 
-// Encerra conexões com o banco ao finalizar a aplicação
+// Close db connection on exit
 const shutdown = async () => {
     console.info("🛑 Encerrando app... limpando conexões com o banco.");
     await client.destroy();

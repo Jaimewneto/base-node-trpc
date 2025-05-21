@@ -3,7 +3,7 @@ import { Expression, ExpressionBuilder, SelectQueryBuilder, sql, SqlBool } from 
 import { Where, Condition, PostgresComparisonOperators } from '@/types/where';
 
 /**
- * Aplica uma condição a uma query Kysely
+ * Aply a condition clause to a Kysely query
  */
 function applyCondition<DB, TB extends keyof DB, Row = DB[TB]>(
     eb: ExpressionBuilder<DB, TB>,
@@ -48,14 +48,14 @@ function applyCondition<DB, TB extends keyof DB, Row = DB[TB]>(
             if (Array.isArray(value) && value.length > 0) {
                 return sql<SqlBool>`${getField()} IN ${formatArray(value)}`;
             } else if (Array.isArray(value) && value.length === 0) {
-                return sql<SqlBool>`false`; // IN com array vazio é sempre falso
+                return sql<SqlBool>`false`; // IN with empty array is aways false
             }
-            return sql<SqlBool>`${getField()} = ${value}`; // Se não for array, trata como igualdade
+            return sql<SqlBool>`${getField()} = ${value}`; // If not a strng, assume it's a equality operator
         case 'not in':
             if (Array.isArray(value) && value.length > 0) {
                 return sql<SqlBool>`${getField()} NOT IN ${formatArray(value)}`;
             } else if (Array.isArray(value) && value.length === 0) {
-                return sql<SqlBool>`true`; // NOT IN com array vazio é sempre verdadeiro
+                return sql<SqlBool>`true`; // NOT IN with empty array is aways true
             }
             return sql<SqlBool>`${getField()} <> ${value}`;
         case 'is':
@@ -88,7 +88,7 @@ function applyCondition<DB, TB extends keyof DB, Row = DB[TB]>(
 }
 
 /**
- * Processa uma cláusula de filtro recursivamente
+ * Processa a filter clause recursively
  */
 function processWhere<DB, TB extends keyof DB, Row = DB[TB]>(
     eb: ExpressionBuilder<DB, TB>,
@@ -121,7 +121,7 @@ function processWhere<DB, TB extends keyof DB, Row = DB[TB]>(
 
 
 /**
- * Aplica uma cláusula de filtro a uma query Kysely
+ * Aply a filter clause to a Kysely query
  */
 export function applyWhereToQuery<DB, TB extends keyof DB, O, Row = DB[TB]>(
     query: SelectQueryBuilder<DB, TB, O>,
@@ -138,7 +138,7 @@ export function applyWhereToQuery<DB, TB extends keyof DB, O, Row = DB[TB]>(
 }
 
 /**
- * Exemplo de uso:
+ * Use exemple:
  * 
  * const query = client.selectFrom('users');
  * const filteredQuery = applyWhereToQuery(query, myWhere);

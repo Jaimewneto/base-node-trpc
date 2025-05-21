@@ -1,6 +1,6 @@
-import { AuthController } from "../../../controllers/AuthController";
+import { AuthController } from "@/controllers/AuthController";
 
-import { AuthValidation } from "../../../validation/AuthValidation";
+import { AuthValidation } from "@/validation/AuthValidation";
 
 import { router, procedure } from "../..";
 

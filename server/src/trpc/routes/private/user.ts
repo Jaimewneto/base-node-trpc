@@ -8,7 +8,6 @@ import { WhereSortValidation } from "@/validation/WhereValidation";
 import { Where } from "@/types/where";
 import { User } from "@/database/schema/users";
 
-// Aqui criamos a instância
 const userController = new UserController();
 
 export const userRouter = router({

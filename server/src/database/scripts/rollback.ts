@@ -27,7 +27,7 @@ const migrator = new Migrator({
 });
 
 async function rollbackMigration() {
-    const { error, results } = await migrator.migrateDown(); // <-- Aqui o rollback
+    const { error, results } = await migrator.migrateDown();
 
     if (error) {
         console.error("Rollback failed:", error);
