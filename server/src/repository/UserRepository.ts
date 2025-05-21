@@ -1,42 +1,15 @@
-import { User, UserUpdate, NewUser } from "../database/schema/users";
+import { Kysely } from 'kysely';
 
-import { Clause } from "../types/clause";
+import { Database } from '../database/schema';
 
-import { BaseRepo } from "./BaseRepository";
+import { User, NewUser, UserUpdate } from '../database/schema/users';
 
-const schema = "users";
+import { BaseRepository } from './BaseRepository';
 
-const findUserById = async (id: string) => {
-    return await BaseRepo.findRecordByIdentifier({ id, schema });
-};
+export class UserRepository extends BaseRepository<Database['users'], User, NewUser, UserUpdate> {
+    constructor(db: Kysely<Database>) {
+        super(db, 'users');
+    }
 
-const findUser = async (clause: Clause<User>) => {
-    return await BaseRepo.findRecord({ schema, clause });
-};
-
-const findUsers = async () => {
-    return await BaseRepo.findManyRecords({ schema });
-};
-
-const createUser = async (user: NewUser) => {
-    return await BaseRepo.createRecord({ data: user, schema });
-};
-
-const updateUser = async (id: string, data: UserUpdate) => {
-    data.updated_at = new Date();
-
-    return await BaseRepo.updateRecord({ id, data, schema });
-};
-
-const deleteUser = async (id: string) => {
-    return await BaseRepo.deleteRecord({ id, schema });
-};
-
-export const UserRepo = {
-    findUserById,
-    findUser,
-    findUsers,
-    updateUser,
-    createUser,
-    deleteUser,
-};
+    // If additional methods are needed (beyond the ones in BaseRepository), add them here
+}

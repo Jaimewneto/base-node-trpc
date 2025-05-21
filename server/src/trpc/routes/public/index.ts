@@ -6,12 +6,14 @@ import { router, procedure } from "../..";
 
 import { userRouter } from "./user";
 
+const authController = new AuthController();
+
 export const appPublicRouter = router({
     user: userRouter,
 
     login: procedure
         .input(AuthValidation.loginSchema)
-        .mutation(({ input }) => AuthController.login({ email: input.email, password: input.password })),
+        .mutation(({ input }) => authController.login({ email: input.email, password: input.password })),
 });
 
 export type AppPublicRouter = typeof appPublicRouter;

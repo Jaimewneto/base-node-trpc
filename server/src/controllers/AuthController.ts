@@ -1,13 +1,12 @@
-import { AuthService } from "../services/AuthService";
+import { AuthService } from "@/services/AuthService";
 
-const login = async ({ email, password }: { email: string; password: string }) => {
-    try {
-        return await AuthService.login({ email, password });
-    } catch (error) {
-        throw error;
+export class AuthController {
+    private authService = new AuthService();
+    async login({ email, password }: { email: string; password: string }) {
+        try {
+            return await this.authService.login({ email, password });
+        } catch (error) {
+            throw error;
+        }
     }
 }
-
-export const AuthController = {
-    login,
-};

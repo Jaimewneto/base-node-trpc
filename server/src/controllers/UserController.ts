@@ -1,51 +1,49 @@
-import { UserService } from "../services/UserService";
+import { UserService } from "@/services/UserService";
 
-import { NewUser, UserUpdate } from "../database/schema/users";
+import { Where } from "@/types/where";
 
-const findUserById = async (id: string) => {
-    try {
-        return await UserService.findUserById(id);
-    } catch (error) {
-        throw error;
+import { NewUser, User, UserUpdate } from "@/database/schema/users";
+
+export class UserController {
+    private userService = new UserService();
+
+    async findUserById(id: string) {
+        try {
+            return await this.userService.findUserById(id);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findUsers({ where }: { where?: Where<User> }) {
+        try {
+            return await this.userService.findUsers();
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async createUser(input: NewUser) {
+        try {
+            return await this.userService.createUser(input);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateUser(id: string, input: UserUpdate) {
+        try {
+            return await this.userService.updateUser(id, input);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteUser(id: string) {
+        try {
+            return await this.userService.deleteUser(id);
+        } catch (error) {
+            throw error;
+        }
     }
 }
-
-const findUsers = async () => {
-    try {
-        return await UserService.findUsers();
-    } catch (error) {
-        throw error;
-    }
-}
-
-const createUser = async (input: NewUser) => {
-    try {
-        return await UserService.createUser(input);
-    } catch (error) {
-        throw error;
-    }
-}
-
-const updateUser = async (id: string, input: UserUpdate) => {
-    try {
-        return await UserService.updateUser(id, input);
-    } catch (error) {
-        throw error;
-    }
-}
-
-const deleteUser = async (id: string) => {
-    try {
-        return await UserService.deleteUser(id);
-    } catch (error) {
-        throw error;
-    }
-}
-
-export const UserController = {
-    findUserById,
-    findUsers,
-    createUser,
-    updateUser,
-    deleteUser,
-};

@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "ES2024",
+        "target": "ES2022",
         "module": "CommonJS",
         "rootDir": "./src",
         "outDir": "./dist",
@@ -12,7 +12,10 @@
         "baseUrl": "./src",
         "paths": {
             "@/*": ["./*"]
-        }
+        },
+        "noEmit": true,
+        "typeRoots": ["./node_modules/@types"]
     },
-    "include": ["src"]
+    "include": ["src"],
+    "exclude": ["node_modules"]
 }

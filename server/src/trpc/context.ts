@@ -1,4 +1,3 @@
-import type { inferAsyncReturnType } from "@trpc/server";
 import type { FastifyRequest } from "fastify";
 
 export async function createContext({ req }: { req: FastifyRequest }) {
@@ -7,5 +6,3 @@ export async function createContext({ req }: { req: FastifyRequest }) {
         headers: req.headers,
     };
 }
-
-export type ContextType = inferAsyncReturnType<typeof createContext>;

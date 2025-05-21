@@ -1,21 +1,30 @@
 import { router, protectedProcedure } from "../..";
 
-import { UserController } from "../../../controllers/UserController";
+import { UserController } from "@/controllers/UserController";
 
-import { UserValidation } from "../../../validation/UserValidation";
+import { UserValidation } from "@/validation/UserValidation";
+import { WhereSortValidation } from "@/validation/WhereValidation";
+
+import { Where } from "@/types/where";
+import { User } from "@/database/schema/users";
+
+// Aqui criamos a instância
+const userController = new UserController();
 
 export const userRouter = router({
     getUser: protectedProcedure
         .input(UserValidation.identifierSchema)
-        .query(({ input }) => UserController.findUserById(input.id)),
+        .query(({ input }) => userController.findUserById(input.id)),
 
-    getUsers: protectedProcedure.query(UserController.findUsers),
+    getUsers: protectedProcedure
+        .input(WhereSortValidation.WhereSortSchema || undefined)
+        .query(({ input }) => userController.findUsers({ where: input.where as Where<User> })),
 
     updateUser: protectedProcedure
         .input(UserValidation.patchSchema)
-        .mutation(({ input }) => UserController.updateUser(input.id, input)),
+        .mutation(({ input }) => userController.updateUser(input.id, input)),
 
     deleteUser: protectedProcedure
         .input(UserValidation.identifierSchema)
-        .mutation(({ input }) => UserController.deleteUser(input.id)),
+        .mutation(({ input }) => userController.deleteUser(input.id)),
 });

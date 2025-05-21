@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-// lembrar de adicionar os operadores no validador de schemas em src/validation/clause.ts
+// lembrar de adicionar os operadores no validador de schemas em src/validation/where.ts
 
 export type PostgresComparisonOperators =
     | "="
@@ -24,19 +24,20 @@ export type PostgresComparisonOperators =
 
 type ValueTypes = string | number | boolean | bigint | null;
 
-export type SmartField<T> = keyof T extends string ? keyof T | (string & {}) : string;
+type Field<T> = keyof T;
+type AnyField = string;
 
-export interface Condition<T = unknown> {
-    field: SmartField<T>;
-    operator: Lowercase<PostgresComparisonOperators> | Uppercase<PostgresComparisonOperators>;
-    value: ValueTypes | ValueTypes[];
-    unaccent?: boolean;
-}
+type Operator = Lowercase<PostgresComparisonOperators> | Uppercase<PostgresComparisonOperators>;
 
-export interface Clause<T = unknown> {
-    junction: "and" | "or";
-    conditions: (Condition<T> | Clause<T>)[];
-}
+type Junctions = "and" | "or";
+
+export type Condition<T = never> = [T] extends [never]
+  ? { field: AnyField; operator: Operator; value: ValueTypes | ValueTypes[]; unaccent?: boolean }
+  : { field: Field<T>; operator: Operator; value: ValueTypes | ValueTypes[]; unaccent?: boolean };
+
+export type Where<T = never> = [T] extends [never]
+  ? { junction: Junctions; conditions: (Condition | Where)[] }
+  : { junction: Junctions; conditions: (Condition<T> | Where<T>)[] };
 
 export interface OrderBy<T = unknown> {
     field: keyof T | string;
@@ -44,7 +45,7 @@ export interface OrderBy<T = unknown> {
 }
 
 /* 
-const example: Clause = {
+const example: Where = {
     junction: "or",
     conditions: [
         {
@@ -64,7 +65,7 @@ const example: Clause = {
     ],
 };
 
-const example2: Clause = {
+const example2: Where = {
     junction: "or",
     conditions: [
         { field: "condicao1", operator: "=", value: "value1" },

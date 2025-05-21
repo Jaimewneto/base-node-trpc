@@ -1,13 +1,13 @@
 import { router, procedure } from "../..";
 
-import { UserController } from "../../../controllers/UserController";
+import { UserController } from "@/controllers/UserController";
 
-import { UserValidation } from "../../../validation/UserValidation";
+import { UserValidation } from "@/validation/UserValidation";
+
+const userController = new UserController();
 
 export const userRouter = router({
-    getUsers: procedure.query(UserController.findUsers),
-
     createUser: procedure
         .input(UserValidation.createSchema)
-        .mutation(({ input }) => UserController.createUser(input)),
+        .mutation(({ input }) => userController.createUser(input)),
 });

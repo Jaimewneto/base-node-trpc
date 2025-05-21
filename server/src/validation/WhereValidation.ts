@@ -43,9 +43,9 @@ export const ConditionZodSchema = z.object({
     value: z.union([z.string(), z.number(), z.boolean(), z.null(), z.array(z.union([z.string(), z.number()]))]),
 });
 
-export const ClauseZodSchema: z.ZodType<any> = z.object({
+export const WhereZodSchema: z.ZodType<any> = z.object({
     junction: z.enum(["and", "or"]),
-    conditions: z.array(z.lazy(() => z.union([ConditionZodSchema, ClauseZodSchema]))),
+    conditions: z.array(z.lazy(() => z.union([ConditionZodSchema, WhereZodSchema]))),
 });
 
 // Validação para OrderBy
@@ -56,8 +56,8 @@ export const OrderBySchema = z.object({
 
 export const OrderByArraySchema = z.array(OrderBySchema);
 
-export const ClauseSortSchema = z.object({
-    clause: z
+export const WhereSortSchema = z.object({
+    where: z
         .object({
             junction: z.enum(["and", "or"]),
             conditions: z.array(
@@ -73,3 +73,7 @@ export const ClauseSortSchema = z.object({
         .optional(),
     sort: OrderByArraySchema.optional(),
 });
+
+export const WhereSortValidation = {
+    WhereSortSchema,
+};

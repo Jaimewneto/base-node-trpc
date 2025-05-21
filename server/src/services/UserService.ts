@@ -1,56 +1,55 @@
 import { hash } from "bcryptjs";
 
-import { UserRepo } from "../repository/UserRepository";
+import { UserRepository } from "../repository/UserRepository";
 
 import { User, NewUser, UserUpdate } from "../database/schema/users";
 
-import { Clause } from "../types/clause";
+import { Where } from "../types/where";
 
-const findUserById = async (id: string) => {
-    return await UserRepo.findUserById(id);
-}
+import { client } from "@/database/client";
 
-const findUserByEmail = async (email: string) => {
-    const clause: Clause<User> = { junction: "and", conditions: [{ field: "email", operator: "=", value: email }] };
+export class UserService {
+    private userRepository = new UserRepository(client);
 
-    return await UserRepo.findUser(clause);
-};
+    async findUserById(id: string) {
+        const where: Where<User> = { junction: "and", conditions: [{ field: "id", operator: "=", value: id }] };
 
-const findUsers = async () => {
-    return await UserRepo.findUsers();
-};
+        return await this.userRepository.findOne(where);
+    }
 
-const createUser = async (data: NewUser) => {
-    const password = await hash(data.password, 10);
+    async findUserByEmail(email: string) {
+        const where: Where<User> = { junction: "and", conditions: [{ field: "email", operator: "=", value: email }] };
 
-    const user: NewUser = {
-        ...data,
-        password,
+        return await this.userRepository.findOne(where);
     };
 
-    return await UserRepo.createUser(user);
-}
-
-const updateUser = async (id: string, data: UserUpdate) => {
-    const password = data.password ? await hash(data.password, 10) : undefined;
-
-    const user: UserUpdate = {
-        ...data,
-        password,
+    async findUsers() {
+        return await this.userRepository.findMany();
     };
 
-    return await UserRepo.updateUser(id, user);
-}
+    async createUser(data: NewUser) {
+        const password = await hash(data.password, 10);
 
-const deleteUser = async (id: string) => {
-    return await UserRepo.deleteUser(id);
-}
+        const user: NewUser = {
+            ...data,
+            password,
+        };
 
-export const UserService = {
-    findUserById,
-    findUserByEmail,
-    findUsers,
-    createUser,
-    updateUser,
-    deleteUser,
-};
+        return await this.userRepository.create(user);
+    }
+
+    async updateUser(id: string, data: UserUpdate) {
+        const password = data.password ? await hash(data.password, 10) : undefined;
+
+        const user: UserUpdate = {
+            ...data,
+            password,
+        };
+
+        return await this.userRepository.update(id, user);
+    }
+
+    async deleteUser(id: string) {
+        return await this.userRepository.delete(id);
+    }
+}

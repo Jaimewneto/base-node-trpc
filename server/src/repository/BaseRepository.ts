@@ -1,81 +1,72 @@
-import { client } from "../database/client";
+import { ulid } from 'ulid';
 
-import { Database, NewRecord, RecordUpdate } from "../database/schema";
+import { applyWhereToQuery } from '@/utils/where';
 
-import { Clause } from "../types/clause";
+import { Where } from '@/types/where';
+import {
+    Kysely,
+    Insertable,
+    Selectable,
+    Updateable,
+} from 'kysely';
 
-import { applyClauseToQuery } from "../utils/clause";
+export class BaseRepository<
+    TSchema,
+    TSelectable extends Selectable<TSchema> = Selectable<TSchema>,
+    TInsertable extends Insertable<TSchema> = Insertable<TSchema>,
+    TUpdateable extends Updateable<TSchema> = Updateable<TSchema>
+> {
+    constructor(
+        protected db: Kysely<any>,
+        protected tableName: string
+    ) { }
 
-import { ulid } from "ulid";
+    async findOne(Where?: Where<TSchema>): Promise<TSelectable | undefined> {
+        let query = this.db
+            .selectFrom(this.tableName)
+            .where('deleted_at', 'is', null);
 
-const findRecordByIdentifier = async <T extends keyof Database>({ id, schema }: { id: string; schema: T }) => {
-    return await client
-        .selectFrom(schema)
-        .where("id", "=", id)
-        .where("deleted_at", "is", null)
-        .selectAll()
-        .executeTakeFirst();
-};
+        if (Where) {
+            query = applyWhereToQuery(query, Where);
+        }
 
-const findRecord = async <T extends keyof Database>({ schema, clause }: { schema: T; clause: Clause<T> }) => {
-    let query = client.selectFrom(schema);
-
-    query.where("deleted_at", "is", null)
-
-    if (clause) {
-        const filteredQuery = applyClauseToQuery(query, clause);
-        return await filteredQuery.selectAll().executeTakeFirst();
+        return query.selectAll().executeTakeFirst() as Promise<TSelectable | undefined>;
     }
 
-    return await query
-        .selectAll()
-        .executeTakeFirst();
-};
+    async findMany(Where?: Where<TSchema>): Promise<TSelectable[]> {
+        let query = this.db
+            .selectFrom(this.tableName)
+            .where('deleted_at', 'is', null);
 
-const findManyRecords = async <T extends keyof Database>({ schema, clause }: { schema: T; clause?: Clause<T> }) => {
-    let query = client.selectFrom(schema);
+        if (Where) {
+            query = applyWhereToQuery(query, Where);
+        }
 
-    query.where("deleted_at", "is", null)
-
-    if (clause) {
-        const filteredQuery = applyClauseToQuery(query, clause);
-        return await filteredQuery.selectAll().execute();
+        return query.selectAll().execute() as Promise<TSelectable[]>;
     }
 
-    return await query.selectAll().where("deleted_at", "is", null).execute();
-};
+    async create(data: TInsertable): Promise<TSelectable> {
+        return this.db
+            .insertInto(this.tableName)
+            .values({ ...data, id: ulid() })
+            .returningAll()
+            .executeTakeFirstOrThrow() as Promise<TSelectable>;
+    }
 
-const createRecord = async <T extends keyof Database>({ data, schema }: { data: NewRecord<T>; schema: T }) => {
-    return await client
-        .insertInto(schema)
-        .values({ ...data, id: ulid() })
-        .returningAll()
-        .executeTakeFirstOrThrow();
-};
+    async update(id: string, data: TUpdateable): Promise<TSelectable> {
+        return this.db
+            .updateTable(this.tableName)
+            .set(data)
+            .where('id', '=', id)
+            .returningAll()
+            .executeTakeFirstOrThrow() as Promise<TSelectable>;
+    }
 
-const updateRecord = async <T extends keyof Database>({ id, data, schema }: { id: string; data: RecordUpdate<T>; schema: T }) => {
-    return await client
-        .updateTable(schema)
-        .set(data)
-        .where("id", "=", id)
-        .returningAll()
-        .execute();
-};
-
-const deleteRecord = async <T extends keyof Database>({ id, schema }: { id: string; schema: T }) => {
-    return await client
-        .updateTable(schema)
-        .set({ deleted_at: new Date() })
-        .where("id", "=", id)
-        .returningAll()
-        .executeTakeFirst();
-};
-
-export const BaseRepo = {
-    findRecordByIdentifier,
-    findRecord,
-    findManyRecords,
-    createRecord,
-    updateRecord,
-    deleteRecord,
-};
+    async delete(id: string): Promise<void> {
+        await this.db
+            .updateTable(this.tableName)
+            .set({ deleted_at: new Date() } as any)
+            .where('id', '=', id)
+            .executeTakeFirstOrThrow();
+    }
+}

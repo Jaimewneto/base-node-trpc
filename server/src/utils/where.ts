@@ -1,17 +1,16 @@
 import { Expression, ExpressionBuilder, SelectQueryBuilder, sql, SqlBool } from 'kysely';
 
-import { Clause, Condition, PostgresComparisonOperators } from '@/types/clause';
+import { Where, Condition, PostgresComparisonOperators } from '@/types/where';
 
 /**
  * Aplica uma condição a uma query Kysely
  */
-function applyCondition<DB, TB extends keyof DB>(
+function applyCondition<DB, TB extends keyof DB, Row = DB[TB]>(
     eb: ExpressionBuilder<DB, TB>,
-    condition: Condition
+    condition: Condition<Row>
 ): Expression<SqlBool> {
     const { field, operator, value, unaccent } = condition;
 
-    // Helper para aplicar unaccent se necessário
     const getField = () => {
         if (unaccent) {
             return sql<string>`unaccent(${sql.ref(field.toString())})`;
@@ -19,7 +18,6 @@ function applyCondition<DB, TB extends keyof DB>(
         return sql.ref(field.toString());
     };
 
-    // Função auxiliar para quando value for um array
     const formatArray = (arr: any[]) => {
         return sql`(${sql.join(arr.map(v => sql.lit(v)), sql`, `)})`;
     };
@@ -92,11 +90,11 @@ function applyCondition<DB, TB extends keyof DB>(
 /**
  * Processa uma cláusula de filtro recursivamente
  */
-function processClause<DB, TB extends keyof DB>(
+function processWhere<DB, TB extends keyof DB, Row = DB[TB]>(
     eb: ExpressionBuilder<DB, TB>,
-    clause: Clause
+    where: Where<Row>
 ): Expression<SqlBool> {
-    const { junction, conditions } = clause;
+    const { junction, conditions } = where;
 
     if (!conditions.length) {
         return sql<SqlBool>`true`;
@@ -104,9 +102,9 @@ function processClause<DB, TB extends keyof DB>(
 
     const expressions = conditions.map(condition => {
         if ('junction' in condition) {
-            return processClause(eb, condition as Clause);
+            return processWhere<DB, TB, Row>(eb, condition as Where<Row>);
         } else {
-            return applyCondition(eb, condition as Condition);
+            return applyCondition<DB, TB, Row>(eb, condition as Condition<Row>);
         }
     });
 
@@ -121,19 +119,20 @@ function processClause<DB, TB extends keyof DB>(
     }
 }
 
+
 /**
  * Aplica uma cláusula de filtro a uma query Kysely
  */
-export function applyClauseToQuery<DB, TB extends keyof DB, O>(
+export function applyWhereToQuery<DB, TB extends keyof DB, O, Row = DB[TB]>(
     query: SelectQueryBuilder<DB, TB, O>,
-    clause?: Clause
+    where?: Where<Row>
 ): SelectQueryBuilder<DB, TB, O> {
-    if (!clause) {
+    if (!where) {
         return query;
     }
 
     return query.where((eb) => {
-        const result = processClause(eb, clause);
+        const result = processWhere(eb, where);
         return result;
     });
 }
@@ -142,6 +141,6 @@ export function applyClauseToQuery<DB, TB extends keyof DB, O>(
  * Exemplo de uso:
  * 
  * const query = client.selectFrom('users');
- * const filteredQuery = applyClauseToQuery(query, myClause);
+ * const filteredQuery = applyWhereToQuery(query, myWhere);
  * const results = await filteredQuery.selectAll().execute();
  */
