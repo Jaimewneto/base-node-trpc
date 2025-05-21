@@ -1,14 +1,15 @@
 import Fastify from "fastify";
+
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import { appRouter } from "@/trpc/routes";
 import { createContext } from "@/trpc/context";
+
 import { client } from "@/database/client";
 
 const fastify = Fastify({
     logger: true,
 });
 
-// Plugin tRPC
 fastify.register(fastifyTRPCPlugin, {
     prefix: "/trpc",
     trpcOptions: {
@@ -24,12 +25,11 @@ fastify.listen({ port }, (err, address) => {
         fastify.log.error(err);
         process.exit(1);
     }
-    console.log(`✅ Servidor ouvindo em ${address}`);
+    console.log(`Server listening on ${address}`);
 });
 
-// Close db connection on exit
 const shutdown = async () => {
-    console.info("🛑 Encerrando app... limpando conexões com o banco.");
+    console.info("Shutting down and closing db connection...");
     await client.destroy();
     process.exit(0);
 };
