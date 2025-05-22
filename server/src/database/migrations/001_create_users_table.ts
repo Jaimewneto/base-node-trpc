@@ -2,7 +2,7 @@ import { Kysely, sql } from "kysely";
 
 export async function up(db: Kysely<any>): Promise<void> {
     await db.schema
-        .createTable("users")
+        .createTable("user")
         .addColumn("id", "varchar(26)", (col) => col.primaryKey())
         .addColumn("name", "varchar(255)", (col) => col.notNull())
         .addColumn("email", "varchar(255)", (col) => col.unique().notNull())
@@ -18,5 +18,5 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-    await db.schema.dropTable("users").execute();
+    await db.schema.dropTable("user").execute();
 }

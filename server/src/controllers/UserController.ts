@@ -2,7 +2,7 @@ import { UserService } from "@/services/UserService";
 
 import { Where } from "@/types/where";
 
-import { NewUser, User, UserUpdate } from "@/database/schema/users";
+import { NewUser, User, UserUpdate } from "@/database/schema/user";
 
 export class UserController {
     private userService = new UserService();

@@ -6,7 +6,7 @@ import { Where } from "@/types/where";
 
 import { sign, verify } from "@/utils/auth";
 
-import { User } from "@/database/schema/users";
+import { User } from "@/database/schema/user";
 
 import { client } from "@/database/client";
 

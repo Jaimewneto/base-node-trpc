@@ -6,7 +6,7 @@ import { UserValidation } from "@/validation/UserValidation";
 import { WhereSortValidation } from "@/validation/WhereValidation";
 
 import { Where } from "@/types/where";
-import { User } from "@/database/schema/users";
+import { User } from "@/database/schema/user";
 
 const userController = new UserController();
 

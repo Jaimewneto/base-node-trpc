@@ -163,7 +163,7 @@ export function applyWhereToQuery<
 /**
  * Exemplo de uso:
  * 
- * const query = client.selectFrom('users');
+ * const query = client.selectFrom('user');
  * const filteredQuery = applyWhereToQuery(query, myWhere);
  * const results = await filteredQuery.selectAll().execute();
  */

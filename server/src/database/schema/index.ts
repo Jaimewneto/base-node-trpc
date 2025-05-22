@@ -1,11 +1,11 @@
 import { Insertable, Selectable, Updateable } from "kysely";
 
-import { UserTable } from "./users";
-import { CompanyTable } from "./companies";
+import { UserTable } from "./user";
+import { CompanyTable } from "./company";
 
 export interface Database {
-    users: UserTable;
-    companies: CompanyTable;
+    user: UserTable;
+    company: CompanyTable;
 }
 
 export type Record<T extends keyof Database> = Selectable<Database[T]>;

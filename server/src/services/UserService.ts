@@ -2,7 +2,7 @@ import { hash } from "bcryptjs";
 
 import { UserRepository } from "../repository/UserRepository";
 
-import { User, NewUser, UserUpdate } from "../database/schema/users";
+import { User, NewUser, UserUpdate } from "../database/schema/user";
 
 import { Where } from "../types/where";
 
