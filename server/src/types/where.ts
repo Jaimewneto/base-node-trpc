@@ -21,20 +21,75 @@ export type PostgresComparisonOperators =
 
 type ValueTypes = string | number | boolean | bigint | null;
 
-type Field<T> = keyof T;
-type AnyField = string;
+/** Prefixo opcional para multi-tabela */
+type SmartFieldMulti<T extends Record<string, any>> = {
+    [K in keyof T]: `${K & string}.${Extract<keyof T[K], string>}`;
+}[keyof T];
 
-type Operator = Lowercase<PostgresComparisonOperators> | Uppercase<PostgresComparisonOperators>;
+/** Prefixo opcional para single-table */
+type SmartFieldSingle<T, TableName extends string> =
+    | `${TableName}.${Extract<keyof T, string>}`
+    | Extract<keyof T, string>;
 
-type Junctions = "and" | "or";
+/** Field livre para modo sem tipo */
+type SmartFieldAny = string;
 
-export type Condition<T = never> = [T] extends [never]
-  ? { field: AnyField; operator: Operator; value: ValueTypes | ValueTypes[]; unaccent?: boolean }
-  : { field: Field<T>; operator: Operator; value: ValueTypes | ValueTypes[]; unaccent?: boolean };
+/** Condition & Clause sem validação */
+interface ConditionAny {
+    field: SmartFieldAny;
+    operator: Lowercase<PostgresComparisonOperators> | Uppercase<PostgresComparisonOperators>;
+    value: ValueTypes | ValueTypes[];
+    unaccent?: boolean;
+}
 
-export type Where<T = never> = [T] extends [never]
-  ? { junction: Junctions; conditions: (Condition | Where)[] }
-  : { junction: Junctions; conditions: (Condition<T> | Where<T>)[] };
+interface ClauseAny {
+    junction: "and" | "or";
+    conditions: (ConditionAny | ClauseAny)[];
+}
+
+/** Condition/Clause para single table */
+interface ConditionSingle<T, TableName extends string> {
+    field: SmartFieldSingle<T, TableName>;
+    operator: Lowercase<PostgresComparisonOperators> | Uppercase<PostgresComparisonOperators>;
+    value: ValueTypes | ValueTypes[];
+    unaccent?: boolean;
+}
+
+interface ClauseSingle<T, TableName extends string> {
+    junction: "and" | "or";
+    conditions: (ConditionSingle<T, TableName> | ClauseSingle<T, TableName>)[];
+}
+
+/** Condition/Clause para multi-table */
+interface ConditionMulti<T extends Record<string, any>> {
+    field: SmartFieldMulti<T>;
+    operator: Lowercase<PostgresComparisonOperators> | Uppercase<PostgresComparisonOperators>;
+    value: ValueTypes | ValueTypes[];
+    unaccent?: boolean;
+}
+
+interface ClauseMulti<T extends Record<string, any>> {
+    junction: "and" | "or";
+    conditions: (ConditionMulti<T> | ClauseMulti<T>)[];
+}
+
+export type Condition<T extends Record<string, any>> =
+    | ConditionSingle<T, keyof T & string>
+    | ConditionMulti<T>
+    | ConditionAny;
+
+export type Where<T = undefined, TableName extends string = "main"> =
+    T extends MultiTable<infer M>
+    ? ClauseMulti<M>
+    : T extends Record<string, any>
+    ? ClauseSingle<T, TableName>
+    : ClauseAny;
+
+// Wrapper to use multle tables
+export type MultiTable<T extends Record<string, any>> = {
+    __multi: true;
+    __tables: T;
+};
 
 export interface OrderBy<T = unknown> {
     field: keyof T | string;
@@ -42,38 +97,52 @@ export interface OrderBy<T = unknown> {
 }
 
 /* 
-const example: Where = {
-    junction: "or",
-    conditions: [
-        {
-            junction: "and",
-            conditions: [
-                { field: "field1", operator: "=", value: "value1" },
-                { field: "field2", operator: "=", value: "value2" },
-            ],
-        },
-        {
-            junction: "and",
-            conditions: [
-                { field: "field3", operator: "=", value: "value3" },
-                { field: "field4", operator: "=", value: "value4" },
-            ],
-        },
-    ],
-};
+Exemplo de uso
 
-const example2: Where = {
-    junction: "or",
+Passando um "TableMap"
+type TableMap = {
+    clientes: ClienteModel;
+    pedidos: PedidoModel;
+  };
+  
+const clause: Clause<TableMap> = {
+    type: "and",
     conditions: [
-        { field: "field1", operator: "=", value: "value1" },
-        { field: "field2", operator: "=", value: "value2" },
         {
-            junction: "and",
-            conditions: [
-                { field: "field3", operator: "=", value: "value3" },
-                { field: "field4", operator: "=", value: "value4" },
-            ],
+            field: "clientes.empresa_uuid",
+            operator: "=",
+            value: "",
         },
-    ],
-};
+        {
+            field: "pedidos.emitente_uuid",
+            operator: "=",
+            value: "",
+        },
+    ]
+}
+
+Passando uma só tabela:
+const clause: Clause<ClienteModel, "clientes"> = {
+    type: "and",
+    conditions: [
+        {
+            field: "clientes.empresa_uuid",
+            operator: "=",
+            value: "",
+        },
+    ]
+}
+
+Não passando nenhum generics:
+const clause: Clause = {
+    type: "and",
+    conditions: [
+        {
+            field: "clientes.empresa_uuid", // Pode passar qualquer combinação de tabela.campo
+            operator: "=",
+            value: "",
+        },
+    ]
+}
+
  */

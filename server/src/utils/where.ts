@@ -1,11 +1,25 @@
-import { Expression, ExpressionBuilder, SelectQueryBuilder, sql, SqlBool } from 'kysely';
+import {
+    Expression,
+    ExpressionBuilder,
+    SelectQueryBuilder,
+    sql,
+    SqlBool,
+} from 'kysely';
 
-import { Where, Condition, PostgresComparisonOperators } from '@/types/where';
+import {
+    Where,
+    Condition,
+    PostgresComparisonOperators,
+} from '@/types/where';
 
 /**
- * Aply a condition clause to a Kysely query
+ * Aplica uma cláusula de condição a uma query do Kysely
  */
-function applyCondition<DB, TB extends keyof DB, Row = DB[TB]>(
+function applyCondition<
+    DB,
+    TB extends keyof DB,
+    Row extends Record<string, any>
+>(
     eb: ExpressionBuilder<DB, TB>,
     condition: Condition<Row>
 ): Expression<SqlBool> {
@@ -48,14 +62,14 @@ function applyCondition<DB, TB extends keyof DB, Row = DB[TB]>(
             if (Array.isArray(value) && value.length > 0) {
                 return sql<SqlBool>`${getField()} IN ${formatArray(value)}`;
             } else if (Array.isArray(value) && value.length === 0) {
-                return sql<SqlBool>`false`; // IN with empty array is aways false
+                return sql<SqlBool>`false`; // IN com array vazio sempre falso
             }
-            return sql<SqlBool>`${getField()} = ${value}`; // If not a strng, assume it's a equality operator
+            return sql<SqlBool>`${getField()} = ${value}`;
         case 'not in':
             if (Array.isArray(value) && value.length > 0) {
                 return sql<SqlBool>`${getField()} NOT IN ${formatArray(value)}`;
             } else if (Array.isArray(value) && value.length === 0) {
-                return sql<SqlBool>`true`; // NOT IN with empty array is aways true
+                return sql<SqlBool>`true`; // NOT IN com array vazio sempre verdadeiro
             }
             return sql<SqlBool>`${getField()} <> ${value}`;
         case 'is':
@@ -88,9 +102,13 @@ function applyCondition<DB, TB extends keyof DB, Row = DB[TB]>(
 }
 
 /**
- * Processa a filter clause recursively
+ * Processa recursivamente a cláusula WHERE
  */
-function processWhere<DB, TB extends keyof DB, Row = DB[TB]>(
+function processWhere<
+    DB extends Record<string, Record<string, any>>,
+    TB extends keyof DB,
+    Row extends Record<string, any> = DB[TB]
+>(
     eb: ExpressionBuilder<DB, TB>,
     where: Where<Row>
 ): Expression<SqlBool> {
@@ -100,11 +118,11 @@ function processWhere<DB, TB extends keyof DB, Row = DB[TB]>(
         return sql<SqlBool>`true`;
     }
 
-    const expressions = conditions.map(condition => {
-        if ('junction' in condition) {
-            return processWhere<DB, TB, Row>(eb, condition as Where<Row>);
+    const expressions = conditions.map(cond => {
+        if ('junction' in cond) {
+            return processWhere<DB, TB, Row>(eb, cond as Where<Row>);
         } else {
-            return applyCondition<DB, TB, Row>(eb, condition as Condition<Row>);
+            return applyCondition<DB, TB, Row>(eb, cond as Condition<Row>);
         }
     });
 
@@ -121,9 +139,14 @@ function processWhere<DB, TB extends keyof DB, Row = DB[TB]>(
 
 
 /**
- * Aply a filter clause to a Kysely query
+ * Aplica a cláusula WHERE a uma query do Kysely
  */
-export function applyWhereToQuery<DB, TB extends keyof DB, O, Row = DB[TB]>(
+export function applyWhereToQuery<
+    DB extends Record<string, Record<string, any>>,
+    TB extends keyof DB,
+    O,
+    Row extends Record<string, any> = DB[TB]
+>(
     query: SelectQueryBuilder<DB, TB, O>,
     where?: Where<Row>
 ): SelectQueryBuilder<DB, TB, O> {
@@ -132,13 +155,13 @@ export function applyWhereToQuery<DB, TB extends keyof DB, O, Row = DB[TB]>(
     }
 
     return query.where((eb) => {
-        const result = processWhere(eb, where);
-        return result;
+        return processWhere<DB, TB, Row>(eb, where);
     });
 }
 
+
 /**
- * Use exemple:
+ * Exemplo de uso:
  * 
  * const query = client.selectFrom('users');
  * const filteredQuery = applyWhereToQuery(query, myWhere);
