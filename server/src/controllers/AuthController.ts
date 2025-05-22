@@ -9,4 +9,12 @@ export class AuthController {
             throw error;
         }
     }
+
+    async refreshToken(token: string) {
+        try {
+            return await this.authService.refreshToken(token);
+        } catch (error) {
+            throw error;
+        }
+    }
 }

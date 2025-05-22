@@ -2,7 +2,9 @@ import { SignJWT, jwtVerify, JWTPayload } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET || "my-secret");
 
-export async function sign({ payload, expirationTime}: { payload: JWTPayload; expirationTime: string }) {
+type MyJWTPayload = JWTPayload & { userId: string };
+
+export async function sign({ payload, expirationTime}: { payload: MyJWTPayload; expirationTime: string }) {
     return await new SignJWT(payload)
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
@@ -10,7 +12,7 @@ export async function sign({ payload, expirationTime}: { payload: JWTPayload; ex
         .sign(secret);
 }
 
-export async function verify(token: string) {
+export async function verify(token: string): Promise<MyJWTPayload> {
     const { payload } = await jwtVerify(token, secret);
-    return payload;
+    return payload as MyJWTPayload;
 }

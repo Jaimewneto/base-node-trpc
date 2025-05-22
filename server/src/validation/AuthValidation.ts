@@ -5,6 +5,11 @@ const loginSchema = z.object({
     password: z.string(),
 });
 
+const refreshTokenSchema = z.object({
+    refreshToken: z.string(),
+});
+
 export const AuthValidation = {
     loginSchema,
+    refreshTokenSchema,
 };

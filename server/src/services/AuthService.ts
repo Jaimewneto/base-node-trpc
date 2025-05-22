@@ -4,7 +4,7 @@ import { UserRepository } from "@/repository/UserRepository";
 
 import { Where } from "@/types/where";
 
-import { sign } from "@/utils/auth";
+import { sign, verify } from "@/utils/auth";
 
 import { User } from "@/database/schema/users";
 
@@ -34,8 +34,28 @@ export class AuthService {
         }
 
         return {
-            accessToken: await sign({ payload: { id: user.id }, expirationTime: "1h" }),
-            refreshToken: await sign({ payload: { id: user.id }, expirationTime: "48h" }),
+            accessToken: await sign({ payload: { userId: user.id }, expirationTime: "1h" }),
+            refreshToken: await sign({ payload: { userId: user.id }, expirationTime: "48h" }),
+        };
+    };
+
+    async refreshToken(token: string) {
+        const payload = await verify(token);
+
+        const where: Where<User> = {
+            junction: "and",
+            conditions: [{ field: "id", operator: "=", value: payload.userId }],
+        };
+
+        const user = await this.userRepository.findOne(where);
+
+        if (!user) {
+            throw new Error(authErrorMessage);
+        }
+
+        return {
+            accessToken: await sign({ payload: { userId: user.id }, expirationTime: "1h" }),
+            refreshToken: await sign({ payload: { userId: user.id }, expirationTime: "72h" }),
         };
     };
 }

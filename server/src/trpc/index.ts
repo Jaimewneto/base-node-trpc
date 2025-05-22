@@ -8,7 +8,9 @@ const t = initTRPC.context<typeof createContext>().create();
 const isAuthed = t.middleware(async ({ ctx, next }) => {
     const authHeader = ctx.headers.authorization;
 
-    if (!authHeader) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!authHeader) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Missing Authorization header" });
+    }
 
     const token = authHeader.split(" ")[1];
 
@@ -20,8 +22,12 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
                 user: payload,
             },
         });
-    } catch {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
+    } catch (err: any) {
+        if (err.code === "ERR_JWT_EXPIRED") {
+            throw new TRPCError({ code: "UNAUTHORIZED", message: "Expired token" });
+        }
+
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid token" });
     }
 });
 
