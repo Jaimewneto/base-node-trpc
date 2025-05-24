@@ -8,7 +8,8 @@
         "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --watch src --ignore-watch node_modules --poll src/index.ts",
         "migrate": "ts-node-dev src/database/scripts/migrate.ts",
         "rollback": "ts-node-dev src/database/scripts/rollback.ts",
-        "typecheck": "tsc --noEmit --skipLibCheck"
+        "typecheck": "tsc --noEmit --skipLibCheck",
+        "generateMasterToken": "ts-node-dev src/scripts/generateMasterToken.ts"
     },
     "keywords": [],
     "author": "",

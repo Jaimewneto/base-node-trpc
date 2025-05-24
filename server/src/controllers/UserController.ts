@@ -4,11 +4,16 @@ import { Where } from "@/types/where";
 
 import { NewUser, User, UserUpdate } from "@/database/schema/user";
 
+import { TRPCRequest } from "@/trpc/types";
+
+import { IdentifierSchema, CreateSchema, PatchSchema } from "@/validation/UserValidation";
+
 export class UserController {
     private userService = new UserService();
 
-    async findUserById(id: string) {
+    async findUserById(req: TRPCRequest<IdentifierSchema>) {
         try {
+            const { id } = req.input;
             return await this.userService.findUserById(id);
         } catch (error) {
             throw error;
@@ -23,17 +28,21 @@ export class UserController {
         }
     }
 
-    async createUser(input: NewUser) {
+    async createUser(req: TRPCRequest<CreateSchema>) {
         try {
-            return await this.userService.createUser(input);
+            const newUser: NewUser = req.input;
+
+            return await this.userService.createUser(newUser);
         } catch (error) {
             throw error;
         }
     }
 
-    async updateUser(id: string, input: UserUpdate) {
+    async updateUser(req: TRPCRequest<PatchSchema>) {
         try {
-            return await this.userService.updateUser(id, input);
+            const userUpdate: UserUpdate = req.input;
+
+            return await this.userService.updateUser(userUpdate);
         } catch (error) {
             throw error;
         }

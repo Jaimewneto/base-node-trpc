@@ -1,6 +1,6 @@
 import { compare } from "bcryptjs";
 
-import { UserRepository } from "@/repository/UserRepository";
+import { UserRepository } from "@/repositories/UserRepository";
 
 import { Where } from "@/types/where";
 
@@ -34,8 +34,8 @@ export class AuthService {
         }
 
         return {
-            accessToken: await sign({ payload: { userId: user.id }, expirationTime: "1h" }),
-            refreshToken: await sign({ payload: { userId: user.id }, expirationTime: "48h" }),
+            accessToken: await sign({ payload: { userId: user.id, companyId: user.company_id, role: "user" }, expirationTime: "1h" }),
+            refreshToken: await sign({ payload: { userId: user.id, companyId: user.company_id, role: "user" }, expirationTime: "48h" }),
         };
     };
 
@@ -54,8 +54,8 @@ export class AuthService {
         }
 
         return {
-            accessToken: await sign({ payload: { userId: user.id }, expirationTime: "1h" }),
-            refreshToken: await sign({ payload: { userId: user.id }, expirationTime: "72h" }),
+            accessToken: await sign({ payload: { userId: user.id, companyId: user.company_id, role: "user" }, expirationTime: "1h" }),
+            refreshToken: await sign({ payload: { userId: user.id, companyId: user.company_id, role: "user" }, expirationTime: "72h" }),
         };
     };
 }

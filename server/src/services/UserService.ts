@@ -1,6 +1,6 @@
 import { hash } from "bcryptjs";
 
-import { UserRepository } from "../repository/UserRepository";
+import { UserRepository } from "../repositories/UserRepository";
 
 import { User, NewUser, UserUpdate } from "../database/schema/user";
 
@@ -38,12 +38,15 @@ export class UserService {
         return await this.userRepository.create(user);
     }
 
-    async updateUser(id: string, data: UserUpdate) {
+    async updateUser(data: UserUpdate) {
+        const id = data.id!;
+
         const password = data.password ? await hash(data.password, 10) : undefined;
 
         const user: UserUpdate = {
             ...data,
             password,
+            id: undefined,
         };
 
         return await this.userRepository.update(id, user);

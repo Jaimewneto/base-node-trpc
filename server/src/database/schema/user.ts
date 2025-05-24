@@ -9,6 +9,7 @@ import {
 
 export interface UserTable {
     id: Generated<string>;
+    company_id: string;
     name: string;
     email: string;
     password: string;

@@ -19,7 +19,8 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
         return next({
             ctx: {
                 ...ctx,
-                user: payload,
+                user: payload.userId,
+                role: payload.role,
             },
         });
     } catch (err: any) {
