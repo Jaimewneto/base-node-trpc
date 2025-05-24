@@ -13,7 +13,7 @@ const userController = new UserController();
 export const userRouter = router({
     getUser: protectedProcedure
         .input(UserValidation.identifierSchema)
-        .query(({ input }) => userController.findUserById(input.id)),
+        .query((req) => userController.findUserById(req)),
 
     getUsers: protectedProcedure
         .input(WhereSortValidation.WhereSortSchema || undefined)
@@ -21,7 +21,7 @@ export const userRouter = router({
 
     updateUser: protectedProcedure
         .input(UserValidation.patchSchema)
-        .mutation(({ input }) => userController.updateUser(input.id, input)),
+        .mutation((req) => userController.updateUser(req)),
 
     deleteUser: protectedProcedure
         .input(UserValidation.identifierSchema)
