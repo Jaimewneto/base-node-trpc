@@ -1,17 +1,16 @@
 import { UserService } from "@/services/UserService";
 
-import { Where } from "@/types/where";
+import { NewUser, UserUpdate } from "@/database/schema/user";
 
-import { NewUser, User, UserUpdate } from "@/database/schema/user";
-
-import { TRPCRequest } from "@/trpc/types";
+import { TRPCProtectedRequest, TRPCPublicRequest } from "@/trpc/types";
 
 import { IdentifierSchema, CreateSchema, PatchSchema } from "@/validation/UserValidation";
+import { WhereSortSchemaSchema } from "@/validation/WhereValidation";
 
 export class UserController {
     private userService = new UserService();
 
-    async findUserById(req: TRPCRequest<IdentifierSchema>) {
+    async findUserById(req: TRPCProtectedRequest<IdentifierSchema>) {
         try {
             const { id } = req.input;
             return await this.userService.findUserById(id);
@@ -20,7 +19,7 @@ export class UserController {
         }
     }
 
-    async findUsers({ where }: { where?: Where<User> }) {
+    async findUsers(req: TRPCProtectedRequest<WhereSortSchemaSchema>) {
         try {
             return await this.userService.findUsers();
         } catch (error) {
@@ -28,7 +27,7 @@ export class UserController {
         }
     }
 
-    async createUser(req: TRPCRequest<CreateSchema>) {
+    async createUser(req: TRPCPublicRequest<CreateSchema>) {
         try {
             const newUser: NewUser = req.input;
 
@@ -38,7 +37,7 @@ export class UserController {
         }
     }
 
-    async updateUser(req: TRPCRequest<PatchSchema>) {
+    async updateUser(req: TRPCProtectedRequest<PatchSchema>) {
         try {
             const userUpdate: UserUpdate = req.input;
 
@@ -48,8 +47,10 @@ export class UserController {
         }
     }
 
-    async deleteUser(id: string) {
+    async deleteUser(req: TRPCProtectedRequest<IdentifierSchema>) {
         try {
+            const { id } = req.input;
+
             return await this.userService.deleteUser(id);
         } catch (error) {
             throw error;

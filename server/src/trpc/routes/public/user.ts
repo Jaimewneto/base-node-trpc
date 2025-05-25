@@ -9,5 +9,5 @@ const userController = new UserController();
 export const userRouter = router({
     createUser: procedure
         .input(UserValidation.createSchema)
-        .mutation(({ input }) => userController.createUser(input)),
+        .mutation((req) => userController.createUser(req)),
 });

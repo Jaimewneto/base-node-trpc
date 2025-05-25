@@ -27,7 +27,7 @@ const PostgresOperator = z
     .refine((val) => PostgresComparisonOperators.options.includes(val.toUpperCase() as any), { message: "Operador não suportado" })
     .transform((val) => val.toUpperCase() as any);
 
-export const ConditionZodSchema = z.object({
+const ConditionZodSchema = z.object({
     field: z.string(),
     operator: PostgresOperator,
     unaccent: z.boolean().optional(),
@@ -43,20 +43,20 @@ export const ConditionZodSchema = z.object({
     value: z.union([z.string(), z.number(), z.boolean(), z.null(), z.array(z.union([z.string(), z.number()]))]),
 });
 
-export const WhereZodSchema: z.ZodType<any> = z.object({
+const WhereZodSchema: z.ZodType<any> = z.object({
     junction: z.enum(["and", "or"]),
     conditions: z.array(z.lazy(() => z.union([ConditionZodSchema, WhereZodSchema]))),
 });
 
 // Validação para OrderBy
-export const OrderBySchema = z.object({
+const OrderBySchema = z.object({
     field: z.string(),
     direction: z.enum(["asc", "desc"]),
 });
 
-export const OrderByArraySchema = z.array(OrderBySchema);
+const OrderByArraySchema = z.array(OrderBySchema);
 
-export const WhereSortSchema = z.object({
+const WhereSortSchema = z.object({
     where: z
         .object({
             junction: z.enum(["and", "or"]),
@@ -77,3 +77,5 @@ export const WhereSortSchema = z.object({
 export const WhereSortValidation = {
     WhereSortSchema,
 };
+
+export type WhereSortSchemaSchema = z.infer<typeof WhereSortSchema>;
