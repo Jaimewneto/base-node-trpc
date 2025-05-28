@@ -1,11 +1,12 @@
 import { UserService } from "@/services/UserService";
 
-import { NewUser, UserUpdate } from "@/database/schema/user";
+import { NewUser, User, UserUpdate } from "@/database/schema/user";
 
 import { TRPCProtectedRequest, TRPCPublicRequest } from "@/trpc/types";
 
 import { IdentifierSchema, CreateSchema, PatchSchema } from "@/validation/UserValidation";
 import { WhereSortSchemaSchema } from "@/validation/WhereValidation";
+import { QueryMany } from "@/types/query";
 
 export class UserController {
     private userService = new UserService();
@@ -21,7 +22,15 @@ export class UserController {
 
     async findUsers(req: TRPCProtectedRequest<WhereSortSchemaSchema>) {
         try {
-            return await this.userService.findUsers();
+            const query: QueryMany<User> = {
+                where: {
+                    junction: "and",
+                    conditions: [{ field: "created_at", operator: ">", value: new Date().toDateString() }],
+                },
+                orderBy: [{ field: "created_at", direction: "desc" }],
+            };
+
+            return await this.userService.findUsers(query);
         } catch (error) {
             throw error;
         }

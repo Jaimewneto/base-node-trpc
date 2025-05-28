@@ -22,17 +22,17 @@ export type PostgresComparisonOperators =
 type ValueTypes = string | number | boolean | bigint | null;
 
 /** Prefixo opcional para multi-tabela */
-type SmartFieldMulti<T extends Record<string, any>> = {
+export type SmartFieldMulti<T extends Record<string, any>> = {
     [K in keyof T]: `${K & string}.${Extract<keyof T[K], string>}`;
 }[keyof T];
 
 /** Prefixo opcional para single-table */
-type SmartFieldSingle<T, TableName extends string> =
+export type SmartFieldSingle<T, TableName extends string> =
     | `${TableName}.${Extract<keyof T, string>}`
     | Extract<keyof T, string>;
 
 /** Field livre para modo sem tipo */
-type SmartFieldAny = string;
+export type SmartFieldAny = string;
 
 /** Condition & Clause sem validação */
 interface ConditionAny {
@@ -78,11 +78,11 @@ export type Condition<T extends Record<string, any>> =
     | ConditionMulti<T>
     | ConditionAny;
 
-export type Where<T = undefined, TableName extends string = "main"> =
+export type Where<T = undefined, TableName extends string | undefined = undefined> =
     T extends MultiTable<infer M>
     ? ClauseMulti<M>
     : T extends Record<string, any>
-    ? ClauseSingle<T, TableName>
+    ? ClauseSingle<T, TableName extends string ? TableName : never>
     : ClauseAny;
 
 // Wrapper to use multle tables
@@ -90,11 +90,6 @@ export type MultiTable<T extends Record<string, any>> = {
     __multi: true;
     __tables: T;
 };
-
-export interface OrderBy<T = unknown> {
-    field: keyof T | string;
-    direction: "asc" | "desc";
-}
 
 /* 
 Exemplo de uso

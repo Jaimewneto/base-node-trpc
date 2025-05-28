@@ -2,7 +2,7 @@ import { compare } from "bcryptjs";
 
 import { UserRepository } from "@/repositories/UserRepository";
 
-import { Where } from "@/types/where";
+import { Where } from "@/types/query/where";
 
 import { sign, verify } from "@/utils/auth";
 

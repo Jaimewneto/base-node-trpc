@@ -2,13 +2,16 @@ import { ulid } from 'ulid';
 
 import { applyWhereToQuery } from '@/utils/where';
 
-import { Where } from '@/types/where';
+import { Where } from '@/types/query/where';
+
 import {
     Kysely,
     Insertable,
     Selectable,
     Updateable,
 } from 'kysely';
+
+import { QueryMany } from '@/types/query';
 
 export class BaseRepository<
     TSchema,
@@ -21,29 +24,43 @@ export class BaseRepository<
         protected tableName: string
     ) { }
 
-    async findOne(Where?: Where<TSchema>): Promise<TSelectable | undefined> {
+    async findOne<
+        T = undefined,
+        TableName extends string | undefined = undefined
+    >(
+        where?: Where<T extends undefined ? TSchema : T, TableName>
+    ): Promise<TSelectable | null> {
         let query = this.db
             .selectFrom(this.tableName)
             .where('deleted_at', 'is', null);
 
-        if (Where) {
-            query = applyWhereToQuery(query, Where);
+        if (where) {
+            query = applyWhereToQuery(query, where);
         }
 
-        return query.selectAll().executeTakeFirst() as Promise<TSelectable | undefined>;
+        return query.selectAll().executeTakeFirst() as Promise<TSelectable | null>;
     }
 
-    async findMany(Where?: Where<TSchema>): Promise<TSelectable[]> {
+
+    async findMany<
+        T = undefined,
+        TableName extends string | undefined = undefined
+    >(
+        params?: QueryMany<T extends undefined ? TSchema : T, TableName>
+    ): Promise<TSelectable[]> {
         let query = this.db
             .selectFrom(this.tableName)
             .where('deleted_at', 'is', null);
 
-        if (Where) {
-            query = applyWhereToQuery(query, Where);
+        if (params?.where) {
+            query = applyWhereToQuery(query, params.where);
         }
+
+        // Aqui você poderia aplicar select, orderBy, limit, offset se quiser também
 
         return query.selectAll().execute() as Promise<TSelectable[]>;
     }
+
 
     async create(data: TInsertable): Promise<TSelectable> {
         return this.db

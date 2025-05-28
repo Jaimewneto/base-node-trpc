@@ -1,6 +1,6 @@
 import { CompanyService } from "@/services/CompanyService";
 
-import { Where } from "@/types/where";
+import { Where } from "@/types/query/where";
 
 import { NewCompany, Company, CompanyUpdate } from "@/database/schema/company";
 

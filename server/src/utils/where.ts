@@ -10,7 +10,7 @@ import {
     Where,
     Condition,
     PostgresComparisonOperators,
-} from '@/types/where';
+} from '@/types/query/where';
 
 /**
  * Aplica uma cláusula de condição a uma query do Kysely

@@ -4,7 +4,7 @@ import { CompanyRepository } from "../repositories/CompanyRepository";
 
 import { Company, NewCompany, CompanyUpdate } from "../database/schema/company";
 
-import { Where } from "../types/where";
+import { Where } from "../types/query/where";
 
 import { client } from "@/database/client";
 

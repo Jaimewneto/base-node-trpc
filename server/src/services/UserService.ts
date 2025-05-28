@@ -4,9 +4,11 @@ import { UserRepository } from "../repositories/UserRepository";
 
 import { User, NewUser, UserUpdate } from "../database/schema/user";
 
-import { Where } from "../types/where";
+import { Where } from "../types/query/where";
 
 import { client } from "@/database/client";
+
+import { QueryMany } from "@/types/query";
 
 export class UserService {
     private userRepository = new UserRepository(client);
@@ -18,13 +20,18 @@ export class UserService {
     }
 
     async findUserByEmail(email: string) {
-        const where: Where<User> = { junction: "and", conditions: [{ field: "email", operator: "=", value: email }] };
+        const where: Where<User, "usuario"> = { junction: "and", conditions: [{ field: "usuario.updated_at", operator: "=", value: email }] };
 
         return await this.userRepository.findOne(where);
     };
 
-    async findUsers() {
-        return await this.userRepository.findMany();
+    async findUsers(params: QueryMany<User>) {
+        const query: QueryMany<User, "user"> = {
+            select: ["name"],
+            orderBy: [{ field: "user.updated_at", direction: "asc" }],
+        }
+
+        return await this.userRepository.findMany(params);
     };
 
     async createUser(data: NewUser) {
