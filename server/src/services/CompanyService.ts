@@ -8,6 +8,8 @@ import { Where } from "../types/query/where";
 
 import { client } from "@/database/client";
 
+import { QueryMany } from "@/types/query";
+
 export class CompanyService {
     private companyRepository = new CompanyRepository(client);
 
@@ -17,16 +19,25 @@ export class CompanyService {
         return await this.companyRepository.findOne(where);
     }
 
-    async findCompanys() {
-        return await this.companyRepository.findMany();
+    async findCompanys(params?: QueryMany<Company>) {
+        return await this.companyRepository.findMany(params);
     };
 
     async createCompany(data: NewCompany) {
-        return await this.companyRepository.create(data);
+        const company: NewCompany = data;
+
+        return await this.companyRepository.create(company);
     }
 
-    async updateCompany(id: string, data: CompanyUpdate) {
-        return await this.companyRepository.update(id, data);
+    async updateCompany(data: CompanyUpdate) {
+        const id = data.id!;
+
+        const company: CompanyUpdate = {
+            ...data,
+            id: undefined,
+        };
+
+        return await this.companyRepository.update(id, company);
     }
 
     async deleteCompany(id: string) {

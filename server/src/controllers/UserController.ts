@@ -22,15 +22,7 @@ export class UserController {
 
     async findUsers(req: TRPCProtectedRequest<WhereSortSchemaSchema>) {
         try {
-            const query: QueryMany<User> = {
-                where: {
-                    junction: "and",
-                    conditions: [{ field: "created_at", operator: ">", value: new Date().toDateString() }],
-                },
-                orderBy: [{ field: "created_at", direction: "desc" }],
-            };
-
-            return await this.userService.findUsers(query);
+            return await this.userService.findUsers();
         } catch (error) {
             throw error;
         }

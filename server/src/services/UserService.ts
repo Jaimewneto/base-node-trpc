@@ -20,17 +20,12 @@ export class UserService {
     }
 
     async findUserByEmail(email: string) {
-        const where: Where<User, "usuario"> = { junction: "and", conditions: [{ field: "usuario.updated_at", operator: "=", value: email }] };
+        const where: Where<User, "user"> = { junction: "and", conditions: [{ field: "user.updated_at", operator: "=", value: email }] };
 
         return await this.userRepository.findOne(where);
     };
 
-    async findUsers(params: QueryMany<User>) {
-        const query: QueryMany<User, "user"> = {
-            select: ["name"],
-            orderBy: [{ field: "user.updated_at", direction: "asc" }],
-        }
-
+    async findUsers(params?: QueryMany<User>) {
         return await this.userRepository.findMany(params);
     };
 

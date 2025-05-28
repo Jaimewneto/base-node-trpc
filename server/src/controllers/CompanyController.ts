@@ -1,21 +1,26 @@
 import { CompanyService } from "@/services/CompanyService";
 
-import { Where } from "@/types/query/where";
-
 import { NewCompany, Company, CompanyUpdate } from "@/database/schema/company";
+
+import { TRPCProtectedRequest, TRPCPublicRequest } from "@/trpc/types";
+
+import { IdentifierSchema, CreateSchema, PatchSchema } from "@/validation/CompanyValidation";
+
+import { WhereSortSchemaSchema } from "@/validation/WhereValidation";
 
 export class CompanyController {
     private companyService = new CompanyService();
 
-    async findCompanyById(id: string) {
+    async findCompanyById(req: TRPCProtectedRequest<IdentifierSchema>) {
         try {
+            const { id } = req.input;
             return await this.companyService.findCompanyById(id);
         } catch (error) {
             throw error;
         }
     }
 
-    async findCompanys({ where }: { where?: Where<Company> }) {
+    async findCompanys(req: TRPCProtectedRequest<WhereSortSchemaSchema>) {
         try {
             return await this.companyService.findCompanys();
         } catch (error) {
@@ -23,24 +28,30 @@ export class CompanyController {
         }
     }
 
-    async createCompany(input: NewCompany) {
+    async createCompany(req: TRPCPublicRequest<CreateSchema>) {
         try {
-            return await this.companyService.createCompany(input);
+            const newCompany: NewCompany = req.input;
+
+            return await this.companyService.createCompany(newCompany);
         } catch (error) {
             throw error;
         }
     }
 
-    async updateCompany(id: string, input: CompanyUpdate) {
+    async updateCompany(req: TRPCProtectedRequest<PatchSchema>) {
         try {
-            return await this.companyService.updateCompany(id, input);
+            const companyUpdate: CompanyUpdate = req.input;
+
+            return await this.companyService.updateCompany(companyUpdate);
         } catch (error) {
             throw error;
         }
     }
 
-    async deleteCompany(id: string) {
+    async deleteCompany(req: TRPCProtectedRequest<IdentifierSchema>) {
         try {
+            const { id } = req.input;
+
             return await this.companyService.deleteCompany(id);
         } catch (error) {
             throw error;
