@@ -1,21 +1,26 @@
 import { UserService } from "@/services/UserService";
 
-import { Where } from "@/types/where";
-
 import { NewUser, User, UserUpdate } from "@/database/schema/user";
+
+import { TRPCProtectedRequest, TRPCPublicRequest } from "@/trpc/types";
+
+import { IdentifierSchema, CreateSchema, PatchSchema } from "@/validation/UserValidation";
+import { WhereSortSchemaSchema } from "@/validation/WhereValidation";
+import { QueryMany } from "@/types/query";
 
 export class UserController {
     private userService = new UserService();
 
-    async findUserById(id: string) {
+    async findUserById(req: TRPCProtectedRequest<IdentifierSchema>) {
         try {
+            const { id } = req.input;
             return await this.userService.findUserById(id);
         } catch (error) {
             throw error;
         }
     }
 
-    async findUsers({ where }: { where?: Where<User> }) {
+    async findUsers(req: TRPCProtectedRequest<WhereSortSchemaSchema>) {
         try {
             return await this.userService.findUsers();
         } catch (error) {
@@ -23,24 +28,30 @@ export class UserController {
         }
     }
 
-    async createUser(input: NewUser) {
+    async createUser(req: TRPCPublicRequest<CreateSchema>) {
         try {
-            return await this.userService.createUser(input);
+            const newUser: NewUser = req.input;
+
+            return await this.userService.createUser(newUser);
         } catch (error) {
             throw error;
         }
     }
 
-    async updateUser(id: string, input: UserUpdate) {
+    async updateUser(req: TRPCProtectedRequest<PatchSchema>) {
         try {
-            return await this.userService.updateUser(id, input);
+            const userUpdate: UserUpdate = req.input;
+
+            return await this.userService.updateUser(userUpdate);
         } catch (error) {
             throw error;
         }
     }
 
-    async deleteUser(id: string) {
+    async deleteUser(req: TRPCProtectedRequest<IdentifierSchema>) {
         try {
+            const { id } = req.input;
+
             return await this.userService.deleteUser(id);
         } catch (error) {
             throw error;
